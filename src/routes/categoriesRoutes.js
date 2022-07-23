@@ -1,4 +1,4 @@
-import { insertCategories, listCategories } from '../controllers/categories.js';
+import { insertCategories, listCategories } from '../controllers/categoriesController.js';
 import { Router } from 'express';
 
 const router = Router();
