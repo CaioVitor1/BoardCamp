@@ -2,17 +2,14 @@ import connection from "../databases/postgres.js";
 import joi from 'joi';
 
 export async function listGames(req, res) {
+    const {rows: games} = await connection.query('SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId" = categories.id') 
+    console.log(games);
+    return res.send(games)
+}
+
+export async function insertGames(req, res) {
     try{
         const { name, image, stockTotal, categoryId, pricePerDay } = req.body;
-/*name: 'Banco Imobiliário',
-  image: 'http://',
-  stockTotal: 3,
-  categoryId: 1,
-  pricePerDay: 1500, */
-  console.log("o console é: ")
-  console.log(req.body)
-  console.log("o console foi isso")
-
         const gameSchema = joi.object({
             name: joi.string().trim().min(1).required(),
             image: joi.string().required(),
