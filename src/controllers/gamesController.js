@@ -2,9 +2,15 @@ import connection from "../databases/postgres.js";
 import joi from 'joi';
 
 export async function listGames(req, res) {
-    const {rows: games} = await connection.query('SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId" = categories.id') 
-    console.log(games);
-    return res.send(games)
+    const {name} = req.query
+    if(!name) {
+        const {rows: games} = await connection.query('SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId" = categories.id') 
+        console.log(games);
+        return res.send(games)
+    } else{
+        const {rows: games} = await connection.query(`SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId" = categories.id AND games."name" ILIKE '${name}%';`) 
+        return res.send(games)
+    }
 }
 
 export async function insertGames(req, res) {
@@ -38,8 +44,6 @@ export async function insertGames(req, res) {
         return res.sendStatus(201);
 
 
-
-        return res.send(201)
 } catch(erro) {
     console.log(erro);
     res.sendStatus(500);
