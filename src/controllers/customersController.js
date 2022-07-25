@@ -14,7 +14,7 @@ export async function listCustomers(req, res) {
         
 } catch(erro) {
     console.log(erro);
-        res.sendStatus(500);
+    return res.sendStatus(500);
     }
 }
 export async function listUnicCustomers(req, res) {
@@ -23,13 +23,13 @@ export async function listUnicCustomers(req, res) {
         console.log(id)
         const {rows: searchId} = await connection.query('SELECT * FROM customers WHERE id = $1', [id]);        
         if(searchId.length === 0) {
-            return res.status(409).send("ID Não cadastrado")
+            return res.status(404).send("ID Não cadastrado")
         }
-        res.send(searchId)
+        return res.send(searchId)
 
     }catch(erro) {
         console.log(erro);
-        res.sendStatus(500);
+        return res.sendStatus(500);
 }
 }
 
@@ -45,7 +45,7 @@ export async function insertCustomers(req, res) {
         
         const { error } = customersSchema.validate(req.body);
         if (error) {
-            res.status(401).send('Campos inválidos');
+            res.status(400).send('Campos inválidos');
             return;
         }
 
@@ -80,7 +80,7 @@ export async function updateCustomers(req, res) {
        
        const { error } = customersSchema.validate(req.body);
        if (error) {
-           res.status(401).send('Campos inválidos');
+           res.status(400).send('Campos inválidos');
            return;
        }
 
@@ -90,8 +90,8 @@ export async function updateCustomers(req, res) {
            return res.status(409).send("CPF já cadastrado por outro usuário")
        }
        
-       //const updateCustomer = await connection.query('UPDATE customers SET name = name, phone = phone, cpf = cpf, birthday = birthday WHERE id = $1', [id]) 
-       return res.send("dados atualizados")
+       const updateCustomer = await connection.query(`UPDATE customers SET name = '${name}', phone = '${phone}', cpf = '${cpf}', birthday = '${birthday}' WHERE id = $1`, [id]) 
+       return res.sendStatus(200)
 
 
     } catch(erro) {

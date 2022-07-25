@@ -34,7 +34,7 @@ export async function insertGames(req, res) {
        
         console.log(searchName)
         if(searchCategory.length === 0) {
-            return res.status(409).send("categoria não existe")
+            return res.status(400).send("categoria não existe")
         }
         if(searchName.length !== 0) {
             return res.status(409).send("Nome já existe")

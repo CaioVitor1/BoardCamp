@@ -14,7 +14,7 @@ export async function listCategories(req, res) {
 export async function insertCategories(req, res) {
     try{
         const { name } = req.body;
-
+    
         const nameSchema = joi.object({
             name: joi.string().required()
         });
@@ -27,7 +27,10 @@ export async function insertCategories(req, res) {
 
         const {rows: searchName} = await connection.query('SELECT * FROM categories WHERE name = $1', [name])
         console.log(searchName)
-        if(!name) {
+       
+       const nameNoEmpty = name.trim()
+       console.log(nameNoEmpty)
+        if(nameNoEmpty.length === 0) {
             return res.sendStatus(400);
         }
         if(searchName.length !== 0) {
