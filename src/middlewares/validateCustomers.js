@@ -1,6 +1,8 @@
 import connection from "../databases/postgres.js";
-import joi from 'joi';
 import dayjs from "dayjs";
+import baseJoi from 'joi';
+import joiDate from '@joi/date';
+const joi = baseJoi.extend(joiDate);
 
 export async function validateCustomer(req, res, next) {
     const date = dayjs().format('YYYY-MM-DD');
@@ -9,7 +11,7 @@ export async function validateCustomer(req, res, next) {
         name: joi.string().trim().min(1).required(),
         phone: joi.string().min(10).max(11).pattern(/^[0-9]+$/).required(),
         cpf:joi.string().min(11).max(11).pattern(/^[0-9]+$/).required(),
-        birthday: joi.date().max(date).min('1900-01-01').required()
+        birthday: joi.date().format('YYYY-MM-DD').max(date).min('1900-01-01').required()
     });
     
     const { error } = customersSchema.validate(req.body);
@@ -27,6 +29,7 @@ export async function validateCustomer(req, res, next) {
 }
 
 export async function validateUpdate(req, res, next) {
+       const date = dayjs().format('YYYY-MM-DD');
        const {cpf} = req.body;
        const {id} = req.params;
        const numberId = parseInt(id)
@@ -34,7 +37,7 @@ export async function validateUpdate(req, res, next) {
            name: joi.string().trim().min(1).required(),
            phone: joi.string().min(10).max(11).pattern(/^[0-9]+$/).required(),
            cpf:joi.string().min(11).max(11).pattern(/^[0-9]+$/).required(),
-           birthday: joi.string().pattern(/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/).required()
+           birthday: joi.date().format('YYYY-MM-DD').max(date).min('1900-01-01').required()
        });
        
        const { error } = customersSchema.validate(req.body);
