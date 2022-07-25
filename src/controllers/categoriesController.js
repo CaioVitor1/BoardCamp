@@ -1,5 +1,4 @@
 import connection from "../databases/postgres.js";
-import joi from 'joi';
 
 export async function listCategories(req, res) {
     try{
@@ -14,16 +13,6 @@ export async function listCategories(req, res) {
 export async function insertCategories(req, res) {
     try{
         const { name } = req.body;
-    
-        const nameSchema = joi.object({
-            name: joi.string().required()
-        });
-    
-        const { error } = nameSchema.validate(req.body);
-        if (error) {
-            res.status(401).send('Campos inválidos');
-            return;
-        }
 
         const {rows: searchName} = await connection.query('SELECT * FROM categories WHERE name = $1', [name])
         console.log(searchName)
