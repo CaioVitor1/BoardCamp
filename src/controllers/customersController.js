@@ -1,5 +1,6 @@
 import connection from "../databases/postgres.js";
 import joi from 'joi';
+import dayjs from "dayjs";
 
 export async function listCustomers(req, res) {
     try{
@@ -34,13 +35,15 @@ export async function listUnicCustomers(req, res) {
 }
 
 export async function insertCustomers(req, res) {
+  
     try{
+        const date = dayjs().format('YYYY-MM-DD');
         const { name, phone, cpf, birthday } = req.body;
         const customersSchema = joi.object({
             name: joi.string().trim().min(1).required(),
             phone: joi.string().min(10).max(11).pattern(/^[0-9]+$/).required(),
             cpf:joi.string().min(11).max(11).pattern(/^[0-9]+$/).required(),
-            birthday: joi.string().pattern(/^[0-9]{4}\-[0-9]{2}\-[0-9]{2}$/).required()
+            birthday: joi.date().max(date).min('1900-01-01').required()
         });
         
         const { error } = customersSchema.validate(req.body);
